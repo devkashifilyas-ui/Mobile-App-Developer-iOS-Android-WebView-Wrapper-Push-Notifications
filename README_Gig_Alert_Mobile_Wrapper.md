@@ -122,9 +122,3 @@ Scales to millions of users
 
 Ongoing support: USD 20/hour
 
----
-
-## 📞 Contact
-
-For questions or integration clarification, coordinate directly with the CTO.
-
