@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shoutt – Gig Alert App Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=IBM+Plex+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --card: #16161f;
+    --border: #1e1e2e;
+    --accent: #00e5a0;
+    --accent2: #7c6cfc;
+    --text: #e8e8f0;
+    --muted: #6b6b85;
+    --danger: #ff4d6d;
+    --warn: #ffb347;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(0,229,160,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 70%, rgba(124,108,252,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 60px 80px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,229,160,0.08);
+    border: 1px solid rgba(0,229,160,0.2);
+    color: var(--accent);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 4px;
+    margin-bottom: 36px;
+    width: fit-content;
+  }
+
+  .tag::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(42px, 4.5vw, 68px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.7;
+    max-width: 400px;
+    margin-bottom: 48px;
+  }
+
+  .stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 48px;
+  }
+
+  .chip {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+
+  .chip.hi {
+    border-color: rgba(124,108,252,0.3);
+    color: var(--accent2);
+    background: rgba(124,108,252,0.07);
+  }
+
+  .milestones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .ms {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    cursor: default;
+  }
+
+  .ms:hover {
+    border-color: rgba(0,229,160,0.25);
+    transform: translateY(-2px);
+  }
+
+  .ms::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: var(--accent);
+    opacity: 0.5;
+  }
+
+  .ms-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    margin-bottom: 6px;
+  }
+
+  .ms-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .ms-price {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--accent2);
+  }
+
+  /* ── PHONE MOCKUP ── */
+  .hero-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 80px 60px 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .phone-wrapper {
+    position: relative;
+  }
+
+  .phone {
+    width: 280px;
+    height: 560px;
+    background: #0d0d14;
+    border-radius: 36px;
+    border: 2px solid #2a2a3e;
+    position: relative;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.05),
+      0 40px 80px rgba(0,0,0,0.6),
+      0 0 60px rgba(0,229,160,0.06);
+  }
+
+  .phone-notch {
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 28px;
+    background: #0d0d14;
+    border-radius: 0 0 20px 20px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .notch-cam {
+    width: 8px; height: 8px;
+    background: #1a1a28;
+    border-radius: 50%;
+    border: 1px solid #2a2a3e;
+  }
+
+  .phone-screen {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  .phone-status-bar {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 44px;
+    background: rgba(10,10,15,0.95);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 20px 8px;
+    justify-content: space-between;
+    z-index: 5;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+
+  .phone-content {
+    position: absolute;
+    top: 44px; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+  }
+
+  /* APP HEADER */
+  .app-header {
+    background: var(--surface);
+    padding: 16px 18px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .app-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    color: var(--text);
+  }
+
+  .app-logo span { color: var(--accent); }
+
+  .app-sub {
+    font-size: 9px;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  /* NOTIFICATION TOASTS */
+  .toast-area {
+    position: absolute;
+    top: 44px; left: 0; right: 0;
+    z-index: 20;
+    padding: 8px;
+    pointer-events: none;
+  }
+
+  .toast {
+    background: rgba(22,22,31,0.97);
+    border: 1px solid rgba(0,229,160,0.25);
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(0,229,160,0.1);
+  }
+
+  .toast.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .toast-icon {
+    width: 28px; height: 28px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .toast-body { flex: 1; min-width: 0; }
+
+  .toast-app {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .toast-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toast-body-text {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* GIG FEED */
+  .gig-feed {
+    padding: 10px;
+    overflow-y: auto;
+    height: 100%;
+    padding-bottom: 60px;
+  }
+
+  .feed-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 8px 4px 6px;
+  }
+
+  .gig-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gig-card:hover {
+    border-color: rgba(0,229,160,0.3);
+    transform: translateX(2px);
+  }
+
+  .gig-card.new {
+    border-color: rgba(0,229,160,0.35);
+  }
+
+  .gig-card.new::after {
+    content: 'NEW';
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 0.1em;
+  }
+
+  .gig-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 5px;
+    padding-right: 36px;
+    line-height: 1.3;
+  }
+
+  .gig-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .gig-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    background: rgba(124,108,252,0.1);
+    border: 1px solid rgba(124,108,252,0.2);
+    color: var(--accent2);
+  }
+
+  .gig-tag.rate {
+    background: rgba(0,229,160,0.08);
+    border-color: rgba(0,229,160,0.2);
+    color: var(--accent);
+  }
+
+  /* BOTTOM NAV */
+  .phone-nav {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 54px;
+    background: rgba(17,17,24,0.97);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 10px;
+    backdrop-filter: blur(8px);
+    z-index: 5;
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+
+  .nav-item.active { opacity: 1; }
+
+  .nav-icon { font-size: 16px; }
+
+  .nav-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 8px;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+
+  .nav-item.active .nav-label { color: var(--accent); }
+
+  /* ── ARCH SECTION ── */
+  .arch-section {
+    padding: 80px 80px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 3vw, 42px);
+    letter-spacing: -0.02em;
+    margin-bottom: 48px;
+  }
+
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .arch-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+
+  .arch-card:hover {
+    border-color: rgba(0,229,160,0.3);
+    transform: translateY(-4px);
+  }
+
+  .arch-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(0,229,160,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .arch-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 48px;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .arch-phase {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+
+  .arch-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .arch-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .arch-week {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    background: rgba(124,108,252,0.1);
+    border: 1px solid rgba(124,108,252,0.2);
+    color: var(--accent2);
+    padding: 3px 9px;
+    border-radius: 3px;
+    margin-top: 14px;
+  }
+
+  /* ── PUSH FLOW ── */
+  .flow-section {
+    padding: 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .flow-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 50% 60% at 50% 50%, rgba(124,108,252,0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .flow-diagram {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    margin-top: 48px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .flow-node {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    text-align: center;
+    min-width: 140px;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .flow-node:hover {
+    border-color: rgba(0,229,160,0.35);
+    transform: translateY(-3px);
+  }
+
+  .flow-node.active {
+    border-color: rgba(0,229,160,0.4);
+    background: rgba(0,229,160,0.04);
+  }
+
+  .flow-icon { font-size: 24px; margin-bottom: 8px; }
+
+  .flow-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .flow-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 4px;
+  }
+
+  .flow-cost {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    margin-top: 6px;
+  }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    color: var(--accent);
+    font-size: 20px;
+    opacity: 0.5;
+    position: relative;
+  }
+
+  .flow-arrow::after {
+    content: '';
+    position: absolute;
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(0,229,160,0.2), rgba(0,229,160,0.6));
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  /* ── INTERACTIVE DEMO CONTROLS ── */
+  .demo-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: absolute;
+    right: -220px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .ctrl-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ctrl-btn:hover {
+    background: rgba(0,229,160,0.08);
+    border-color: rgba(0,229,160,0.35);
+    color: var(--accent);
+    transform: translateX(-4px);
+  }
+
+  .ctrl-btn .dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* ── COST TABLE ── */
+  .cost-section {
+    padding: 60px 80px 80px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .cost-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 32px;
+    font-size: 13px;
+  }
+
+  .cost-table th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cost-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(30,30,46,0.5);
+    color: var(--text);
+  }
+
+  .cost-table tr:hover td {
+    background: rgba(0,229,160,0.02);
+  }
+
+  .cost-table .winner {
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .cost-table .check { color: var(--accent); }
+  .cost-table .cross { color: var(--danger); opacity: 0.6; }
+  .cost-table .row-highlight td {
+    background: rgba(0,229,160,0.04);
+    border-top: 1px solid rgba(0,229,160,0.2);
+    border-bottom: 1px solid rgba(0,229,160,0.2);
+  }
+
+  /* ── FOOTER CTA ── */
+  .cta-section {
+    padding: 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 80% at 50% 100%, rgba(0,229,160,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .cta-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 4vw, 56px);
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+
+  .cta-sub {
+    color: var(--muted);
+    font-size: 15px;
+    max-width: 480px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  .cta-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    padding: 14px 28px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    cursor: pointer;
+  }
+
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0,229,160,0.3);
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .hero-left { padding: 60px 32px; }
+    .arch-grid { grid-template-columns: 1fr; }
+    .flow-section, .arch-section, .cost-section, .cta-section { padding: 48px 32px; }
+    .milestones { grid-template-columns: 1fr; }
+    .flow-diagram { flex-direction: column; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* GRID LINES BG */
+  .grid-bg {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body > *:not(.grid-bg) { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="tag"><span></span>DEMO · INTERACTIVE PROTOTYPE</div>
+
+    <h1>Mobile Wrapper<br>Built for <em>Gig Alerts</em><br>at Scale</h1>
+
+    <p class="subtitle">Secure WebView iOS + Android app with real-time push notifications, deep linking, and store-ready compliance. Built on Flutter + FCM — no expensive middleware.</p>
+
+    <div class="stack-row">
+      <span class="chip hi">Flutter</span>
+      <span class="chip hi">FCM HTTP v1</span>
+      <span class="chip hi">APNs Bridge</span>
+      <span class="chip">Azure .NET</span>
+      <span class="chip">Universal Links</span>
+      <span class="chip">WebView</span>
+      <span class="chip">Firebase</span>
+    </div>
+
+    <div class="milestones">
+      <div class="ms">
+        <div class="ms-num">M1 · WK 1</div>
+        <div class="ms-title">WebView + Deep Links</div>
+        <div class="ms-price">$1,200</div>
+      </div>
+      <div class="ms">
+        <div class="ms-num">M2 · WK 2</div>
+        <div class="ms-title">Push System (FCM/APNs)</div>
+        <div class="ms-price">$1,200</div>
+      </div>
+      <div class="ms">
+        <div class="ms-num">M3 · WK 3</div>
+        <div class="ms-title">Store Submission</div>
+        <div class="ms-price">$1,000</div>
+      </div>
+      <div class="ms">
+        <div class="ms-num">M4 · POST</div>
+        <div class="ms-title">1 Month Support</div>
+        <div class="ms-price">$600</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="phone-wrapper">
+      <!-- PHONE -->
+      <div class="phone">
+        <div class="phone-notch">
+          <div class="notch-cam"></div>
+          <div class="notch-cam" style="width:14px;height:6px;border-radius:3px;"></div>
+        </div>
+
+        <!-- TOAST LAYER -->
+        <div class="toast-area" id="toastArea"></div>
+
+        <!-- STATUS BAR -->
+        <div class="phone-status-bar">
+          <span>9:41</span>
+          <span>●●●</span>
+        </div>
+
+        <!-- SCREEN CONTENT -->
+        <div class="phone-content">
+          <div class="app-header">
+            <div class="app-logo">Sh<span>ou</span>tt</div>
+            <div class="app-sub">AI-POWERED GIG PLATFORM</div>
+          </div>
+          <div class="gig-feed" id="gigFeed">
+            <div class="feed-label">LATEST GIGS</div>
+          </div>
+          <nav class="phone-nav">
+            <div class="nav-item active">
+              <div class="nav-icon">⚡</div>
+              <div class="nav-label">Feed</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">🔔</div>
+              <div class="nav-label">Alerts</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">🗂</div>
+              <div class="nav-label">Saved</div>
+            </div>
+            <div class="nav-item">
+              <div class="nav-icon">👤</div>
+              <div class="nav-label">Profile</div>
+            </div>
+          </nav>
+        </div>
+      </div>
+
+      <!-- CONTROLS -->
+      <div class="demo-controls">
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px;">DEMO CONTROLS</div>
+        <button class="ctrl-btn" onclick="fireNotification()"><span class="dot"></span>FIRE GIG ALERT</button>
+        <button class="ctrl-btn" onclick="addGig()">⊕ ADD GIG TO FEED</button>
+        <button class="ctrl-btn" onclick="clearFeed()">↺ RESET DEMO</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ARCHITECTURE ── -->
+<section class="arch-section">
+  <div class="section-label">EXECUTION PLAN</div>
+  <div class="section-title">3-Week Delivery Timeline</div>
+
+  <div class="arch-grid">
+    <div class="arch-card">
+      <div class="arch-num">01</div>
+      <div class="arch-phase">WEEK 1 · FOUNDATION</div>
+      <div class="arch-title">Secure WebView + Deep Links</div>
+      <div class="arch-desc">Flutter project scaffold, hardened WebView configuration, HTTPS enforcement, auth token injection, universal links (iOS) and intent filters (Android) for deep linking into any gig page.</div>
+      <span class="arch-week">$1,200 milestone</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-num">02</div>
+      <div class="arch-phase">WEEK 2 · NOTIFICATIONS</div>
+      <div class="arch-title">FCM + APNs Push System</div>
+      <div class="arch-desc">FCM token generation on first launch, token sync to Azure .NET backend, HTTP v1 push delivery, background + killed-state receive, deep-link navigation on tap, retry logic for delivery assurance.</div>
+      <span class="arch-week">$1,200 milestone</span>
+    </div>
+    <div class="arch-card">
+      <div class="arch-num">03</div>
+      <div class="arch-phase">WEEK 3 · LAUNCH</div>
+      <div class="arch-title">App Store + Play Store</div>
+      <div class="arch-desc">Native splash, loading state, error fallback for Apple compliance. Data safety form, notification permissions flow for Google. TestFlight + Play Internal track testing, then production submission and approval handling.</div>
+      <span class="arch-week">$1,000 milestone</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── PUSH FLOW DIAGRAM ── -->
+<section class="flow-section">
+  <div class="section-label">NOTIFICATION ARCHITECTURE</div>
+  <div class="section-title">Push Flow: Zero Middleware Cost</div>
+
+  <div class="flow-diagram">
+    <div class="flow-node active">
+      <div class="flow-icon">☁️</div>
+      <div class="flow-label">Trigger</div>
+      <div class="flow-name">Azure .NET Backend</div>
+      <div class="flow-cost">Your existing stack</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="flow-icon">🔥</div>
+      <div class="flow-label">Delivery</div>
+      <div class="flow-name">FCM HTTP v1</div>
+      <div class="flow-cost">FREE at any volume</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">
+      <div class="flow-icon">🤖</div>
+      <div class="flow-label">Android</div>
+      <div class="flow-name">Direct FCM</div>
+      <div class="flow-cost">$0/message</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;padding:0 8px;">
+      <div style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--muted);">↗ iOS via bridge</div>
+    </div>
+    <div class="flow-node">
+      <div class="flow-icon">🍎</div>
+      <div class="flow-label">iOS</div>
+      <div class="flow-name">APNs via FCM</div>
+      <div class="flow-cost">$0 extra cost</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node active">
+      <div class="flow-icon">📱</div>
+      <div class="flow-label">User</div>
+      <div class="flow-name">Instant Gig Alert</div>
+      <div class="flow-cost">Deep link to gig page</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COST COMPARISON ── -->
+<section class="cost-section">
+  <div class="section-label">COST ANALYSIS</div>
+  <div class="section-title">Push Provider Comparison</div>
+
+  <table class="cost-table">
+    <thead>
+      <tr>
+        <th>Provider</th>
+        <th>Monthly Cost (1M msgs)</th>
+        <th>Scale Friendly</th>
+        <th>Azure Native</th>
+        <th>Complexity</th>
+        <th>Recommendation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="row-highlight">
+        <td class="winner">FCM HTTP v1 (Direct)</td>
+        <td class="winner">$0 — FREE</td>
+        <td class="check">✓ Unlimited</td>
+        <td class="check">✓ Via SDK</td>
+        <td>Low</td>
+        <td class="winner">★ RECOMMENDED</td>
+      </tr>
+      <tr>
+        <td>Azure Notification Hub</td>
+        <td>~$10–$40/mo</td>
+        <td class="check">✓ High</td>
+        <td class="check">✓ Native</td>
+        <td>Medium</td>
+        <td style="color:var(--muted)">If segmentation needed</td>
+      </tr>
+      <tr>
+        <td>OneSignal</td>
+        <td>~$9–$99/mo</td>
+        <td class="check">✓ High</td>
+        <td class="cross">✗ External</td>
+        <td>Low</td>
+        <td style="color:var(--muted)">Overkill for single type</td>
+      </tr>
+      <tr>
+        <td>Pusher Beams</td>
+        <td>~$30–$100/mo</td>
+        <td class="cross">✗ Limited tiers</td>
+        <td class="cross">✗ External</td>
+        <td>Low</td>
+        <td style="color:var(--danger)">Not recommended</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+  <div class="section-label">READY TO BUILD</div>
+  <h2 class="cta-title"><em>Gig alerts are everything.</em><br>Let's ship yours.</h2>
+  <p class="cta-sub">One notification type. Reliable delivery. Zero middleware costs. Store-approved in 3 weeks.</p>
+  <button class="cta-btn" onclick="window.open('https://www.upwork.com/jobs/~022026642655367079423','_blank')">
+    VIEW UPWORK JOB → APPLY NOW
+  </button>
+</section>
+
+<script>
+const GIGS = [
+  { title: "Senior React Developer – FinTech Dashboard", tags: ["React", "TypeScript"], rate: "£850/day", isNew: true },
+  { title: "Python Data Engineer – Azure Pipelines", tags: ["Python", "Azure"], rate: "£700/day", isNew: false },
+  { title: "iOS Swift Developer – 3-Month Contract", tags: ["Swift", "iOS"], rate: "£750/day", isNew: false },
+  { title: "Full Stack .NET + React – E-commerce", tags: [".NET", "React"], rate: "£800/day", isNew: false },
+  { title: "DevOps Engineer – Kubernetes Migration", tags: ["K8s", "DevOps"], rate: "£900/day", isNew: false },
+  { title: "UX Designer – SaaS Platform Redesign", tags: ["Figma", "UX"], rate: "£600/day", isNew: false },
+  { title: "Flutter Developer – B2B Mobile App", tags: ["Flutter", "Firebase"], rate: "£780/day", isNew: true },
+  { title: "ML Engineer – NLP Pipeline Build", tags: ["Python", "NLP"], rate: "£950/day", isNew: false },
+];
+
+let gigIndex = 0;
+
+function renderGig(gig) {
+  const div = document.createElement('div');
+  div.className = 'gig-card' + (gig.isNew ? ' new' : '');
+  div.innerHTML = `
+    <div class="gig-title">${gig.title}</div>
+    <div class="gig-meta">
+      ${gig.tags.map(t => `<span class="gig-tag">${t}</span>`).join('')}
+      <span class="gig-tag rate">${gig.rate}</span>
+    </div>
+  `;
+  return div;
+}
+
+function initFeed() {
+  const feed = document.getElementById('gigFeed');
+  feed.innerHTML = '<div class="feed-label">LATEST GIGS</div>';
+  GIGS.slice(0, 4).forEach(g => feed.appendChild(renderGig(g)));
+  gigIndex = 4;
+}
+
+function addGig() {
+  if (gigIndex >= GIGS.length) gigIndex = 0;
+  const gig = { ...GIGS[gigIndex++], isNew: true };
+  const feed = document.getElementById('gigFeed');
+  const card = renderGig(gig);
+  card.style.opacity = '0';
+  card.style.transform = 'translateX(-12px)';
+  feed.insertBefore(card, feed.children[1]);
+  requestAnimationFrame(() => {
+    card.style.transition = 'all 0.4s cubic-bezier(0.34,1.4,0.64,1)';
+    card.style.opacity = '1';
+    card.style.transform = 'translateX(0)';
+  });
+}
+
+function fireNotification() {
+  const alerts = [
+    { title: "New Gig Alert 🔥", body: "Flutter Dev – £780/day · Remote · Azure" },
+    { title: "High Match Alert ⚡", body: "React + .NET – £1,200 Fixed · London" },
+    { title: "Just Posted!", body: "Senior DevOps – Kubernetes · £900/day" },
+  ];
+  const a = alerts[Math.floor(Math.random() * alerts.length)];
+  const area = document.getElementById('toastArea');
+
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = `
+    <div class="toast-icon">⚡</div>
+    <div class="toast-body">
+      <div class="toast-app">SHOUTT · GIG ALERT</div>
+      <div class="toast-title">${a.title}</div>
+      <div class="toast-body-text">${a.body}</div>
+    </div>
+  `;
+  area.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => { toast.classList.add('visible'); });
+  });
+
+  // Also add the gig to the feed
+  setTimeout(() => addGig(), 500);
+
+  setTimeout(() => {
+    toast.style.transition = 'all 0.3s ease-in';
+    toast.classList.remove('visible');
+    setTimeout(() => toast.remove(), 300);
+  }, 4000);
+}
+
+function clearFeed() {
+  initFeed();
+  document.getElementById('toastArea').innerHTML = '';
+  gigIndex = 4;
+}
+
+// Auto-demo sequence
+initFeed();
+let autoSeq = [
+  () => fireNotification(),
+  () => fireNotification(),
+  () => addGig(),
+];
+let seqI = 0;
+setInterval(() => {
+  autoSeq[seqI % autoSeq.length]();
+  seqI++;
+}, 3800);
+</script>
+
+</body>
+</html>
